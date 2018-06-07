@@ -1,6 +1,20 @@
-var nodemailer = require('nodemailer');
-var Secrets = require("./secrets/secrets");
-var mySecrets = new Secrets()
+const nodemailer = require('nodemailer');
+const Secrets = require('./secrets/secrets');
 
-console.log(mySecrets.gmailPassword);
-mySecrets.test();
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: Secrets.gmailUsername,
+    pass: Secrets.gmailPassword,
+  },
+});
+
+const mailOptions = {
+  from: Secrets.gmailUsername, // sender address
+  to: 'to@email.com', // list of receivers
+  subject: 'Subject of your email', // Subject line
+  html: '<p>Your html here</p>'// plain text body
+};
+
+const sendEmail = (msg) => { }
+

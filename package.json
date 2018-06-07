@@ -7,8 +7,5 @@
     "nodemailer":"4.6.5"
   },
   "scripts": {
-  },
-  "devDependencies": {
-    "eslint": "^4.5.0"
   }
 }
