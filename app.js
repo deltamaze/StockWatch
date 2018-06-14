@@ -2,6 +2,7 @@ const nodemailer = require('nodemailer');
 const Secrets = require('./secrets/secrets');
 const fs = require('fs');
 
+// const apiUrl = 'https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_gainers&start=0&count=5';
 // Stock Alert Parameters
 // percent increase over 2 day span
 const percentIncreaseThreshold = 60; // eslint-disable-line no-unused-vars
@@ -11,8 +12,12 @@ const minNotifyMarketCap = 3000000000; // eslint-disable-line no-unused-vars
 const stockAlertCooldownInMs = (1000 * 60 * 60 * 24 * 7);
 
 const alertHistory = JSON.parse(fs.readFileSync('alertHistory.json'));
+const testJsonPayload = JSON.parse(fs.readFileSync('testPayload.json'));
 
 
+testJsonPayload.finance.result[0].quotes.forEach((qoute) => {
+  console.log(qoute);
+});
 const transporter = nodemailer.createTransport({ // eslint-disable-line no-unused-vars
   service: 'gmail',
   auth: {
@@ -28,11 +33,10 @@ const checkAlertHistory = (ticker) => { // eslint-disable-line no-unused-vars
   return true;
 };
 
-const updateAlertHistory = (ticker) => {
+const updateAlertHistory = (ticker) => { // eslint-disable-line no-unused-vars
   alertHistory[ticker] = { alertTime: Date.now() };
 };
 
-updateAlertHistory('testInsertWednesdayTwo');
 const mailOptions = { // eslint-disable-line no-unused-vars
   from: Secrets.gmailUsername, // sender address
   to: Secrets.notifyTargetEmail, // list of receivers
