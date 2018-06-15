@@ -1,23 +1,17 @@
+// Import Libs
 const nodemailer = require('nodemailer');
 const Secrets = require('./secrets/secrets');
 const fs = require('fs');
+const https = require('https');
 
-// const apiUrl = 'https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_gainers&start=0&count=5';
-// Stock Alert Parameters
-// percent increase over 2 day span
-const percentIncreaseThreshold = 60; // eslint-disable-line no-unused-vars
-// Only notify if market cap is greater than param below
-const minNotifyMarketCap = 3000000000; // eslint-disable-line no-unused-vars
-// only 1 email per stock per set day below
-const stockAlertCooldownInMs = (1000 * 60 * 60 * 24 * 7);
-
+// Configs
+const minPercentIncrease = 10;
+const minNotifyMarketCap = 3000000000;
+const stockAlertCooldownInMs = (1000 * 60 * 60 * 24 * 7);// 7 days;
+const apiUrl = 'https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_gainers&start=0&count=3';
 const alertHistory = JSON.parse(fs.readFileSync('alertHistory.json'));
-const testJsonPayload = JSON.parse(fs.readFileSync('testPayload.json'));
 
-
-testJsonPayload.finance.result[0].quotes.forEach((qoute) => {
-  console.log(qoute);
-});
+// Setup Email Services
 const transporter = nodemailer.createTransport({ // eslint-disable-line no-unused-vars
   service: 'gmail',
   auth: {
@@ -25,6 +19,28 @@ const transporter = nodemailer.createTransport({ // eslint-disable-line no-unuse
     pass: Secrets.gmailPassword,
   },
 });
+const mailOptions = { // eslint-disable-line no-unused-vars
+  from: Secrets.gmailUsername, // sender address
+  to: Secrets.notifyTargetEmail, // list of receivers
+  subject: 'Stock Watch Alert!', // Subject line
+  html: '', // plain text body
+};
+const sendEmailProd = (msg) => { // eslint-disable-line no-unused-vars
+  mailOptions.html = msg;
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error); // eslint-disable-line no-console
+    }
+    console.log('Message sent: %s', info.messageId); // eslint-disable-line no-console
+  });
+};
+const sendEmailTest = (msg) => { // eslint-disable-line no-unused-vars
+  console.log(msg); // eslint-disable-line no-console
+};
+//End Email Config
+
+//Business Logic Functions
+
 const checkAlertHistory = (ticker) => { // eslint-disable-line no-unused-vars
   if (alertHistory[ticker] != null &&
     alertHistory[ticker].alertTime < Date.now() - stockAlertCooldownInMs) {
@@ -37,32 +53,33 @@ const updateAlertHistory = (ticker) => { // eslint-disable-line no-unused-vars
   alertHistory[ticker] = { alertTime: Date.now() };
 };
 
-const mailOptions = { // eslint-disable-line no-unused-vars
-  from: Secrets.gmailUsername, // sender address
-  to: Secrets.notifyTargetEmail, // list of receivers
-  subject: 'Stock Watch Alert!', // Subject line
-  html: '', // plain text body
-};
 const saveAlertHistory = () => {
   fs.writeFileSync('alertHistory.json', JSON.stringify(alertHistory));
 };
 
-// const sendEmail = (msg) => { // Prod
-//   mailOptions.html = msg;
-//   transporter.sendMail(mailOptions, (error, info) => {
-//     if (error) {
-//       console.log(error); // eslint-disable-line no-console
-//     }
-//     console.log('Message sent: %s', info.messageId); // eslint-disable-line no-console
-//   });
-// };
-
-const sendEmail = (msg) => { // Test
-  console.log(msg); // eslint-disable-line no-console
+const CycleThroughStocks = (stockJson) => {
+  stockJson.finance.result[0].quotes.forEach((qoute) => {
+    if (qoute.marketCap.raw > minNotifyMarketCap &&
+      qoute.twoHundredDayAverageChange.raw > minPercentIncrease &&
+      checkAlertHistory(qoute.symbol)) {
+      updateAlertHistory(qoute.symbol);
+      sendEmailTest(`Stock: ${qoute.symbol} 
+        2 Day Percent Change: ${qoute.twoHundredDayAverageChange.fmt}
+        2 Day Percent Change: ${qoute.marketCap.fmt}`);
+    }
+  });
+  saveAlertHistory();
 };
 
-sendEmail('Test Alert, Invest in Amazon ;)');
-saveAlertHistory();
-// download stock info
-// loop through stock info and see if anything matches target parameters
-// send email
+// Pull Stocks info from API
+https.get(apiUrl, (response) => {
+  let body = '';
+  response.on('data', (chunk) => {
+    body += chunk;
+  });
+  response.on('end', () => {
+    const stockInfo = JSON.parse(body);
+    CycleThroughStocks(stockInfo);
+  });
+});
+
