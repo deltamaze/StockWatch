@@ -1,11 +1,10 @@
 // Import Libs
 const nodemailer = require('nodemailer');
-const Secrets = require('./secrets/secrets');
 const fs = require('fs');
 const https = require('https');
-
+const Secrets = require('./secrets/secrets');// This resource is not in Source Control, replace Secrets.X with your own info
 // Configs
-const minPercentIncrease = 10;
+const minPercentIncrease = 60;
 const minNotifyMarketCap = 3000000000;
 const stockAlertCooldownInMs = (1000 * 60 * 60 * 24 * 7);// 7 days;
 const apiUrl = 'https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_gainers&start=0&count=3';
@@ -37,9 +36,9 @@ const sendEmailProd = (msg) => { // eslint-disable-line no-unused-vars
 const sendEmailTest = (msg) => { // eslint-disable-line no-unused-vars
   console.log(msg); // eslint-disable-line no-console
 };
-//End Email Config
+// End Email Config
 
-//Business Logic Functions
+// Business Logic Functions
 
 const checkAlertHistory = (ticker) => { // eslint-disable-line no-unused-vars
   if (alertHistory[ticker] != null &&
