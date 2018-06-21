@@ -63,7 +63,7 @@ const CycleThroughStocks = (stockJson) => {
       checkAlertHistory(qoute.symbol)) {
       updateAlertHistory(qoute.symbol);
       sendEmailProd(`Stock: ${qoute.symbol} 
-        2 Day Percent Change: ${qoute.twoHundredDayAverageChange.fmt}
+        2 Day Percent Change: ${qoute.regularMarketChangePercent.fmt}
         2 Day Percent Change: ${qoute.marketCap.fmt}`);
     }
   });
