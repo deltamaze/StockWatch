@@ -4,7 +4,7 @@ const fs = require('fs');
 const https = require('https');
 const Secrets = require('./secrets/secrets');// This resource is not in Source Control, replace Secrets.X with your own info
 // Configs
-const minPercentIncrease = 10;
+const minPercentIncrease = 20;
 const minNotifyMarketCap = 3000000000;
 const stockAlertCooldownInMs = (1000 * 60 * 60 * 24 * 7);// 7 days;
 const apiUrl = 'https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_gainers&start=0&count=3';
@@ -63,8 +63,8 @@ const CycleThroughStocks = (stockJson) => {
       checkAlertHistory(qoute.symbol)) {
       updateAlertHistory(qoute.symbol);
       sendEmailProd(`Stock: ${qoute.symbol} 
-        2 Day Percent Change: ${qoute.regularMarketChangePercent.fmt}
-        2 Day Percent Change: ${qoute.marketCap.fmt}`);
+        Percent Change: ${qoute.regularMarketChangePercent.fmt}
+        Market Cap: ${qoute.marketCap.fmt}`);
     }
   });
   saveAlertHistory();
