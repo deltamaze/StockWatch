@@ -8,7 +8,8 @@ const minPercentIncrease = 20;
 const minNotifyMarketCap = 3000000000;
 const stockAlertCooldownInMs = (1000 * 60 * 60 * 24 * 7);// 7 days;
 const apiUrl = 'https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_gainers&start=0&count=3';
-const alertHistory = JSON.parse(fs.readFileSync('alertHistory.json'));
+const path = require("path");
+const alertHistory = JSON.parse(fs.readFileSync(path.resolve(__dirname, "./alertHistory.json")));
 
 // Setup Email Services
 const transporter = nodemailer.createTransport({ // eslint-disable-line no-unused-vars
