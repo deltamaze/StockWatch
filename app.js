@@ -3,13 +3,14 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const https = require('https');
 const Secrets = require('./secrets/secrets');// This resource is not in Source Control, replace Secrets.X with your own info
+const path = require('path');
 // Configs
 const minPercentIncrease = 20;
 const minNotifyMarketCap = 3000000000;
 const stockAlertCooldownInMs = (1000 * 60 * 60 * 24 * 7);// 7 days;
 const apiUrl = 'https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_gainers&start=0&count=3';
-const path = require("path");
-const alertHistory = JSON.parse(fs.readFileSync(path.resolve(__dirname, "./alertHistory.json")));
+
+const alertHistory = JSON.parse(fs.readFileSync(path.resolve(__dirname, './alertHistory.json')));
 
 // Setup Email Services
 const transporter = nodemailer.createTransport({ // eslint-disable-line no-unused-vars
@@ -54,7 +55,7 @@ const updateAlertHistory = (ticker) => { // eslint-disable-line no-unused-vars
 };
 
 const saveAlertHistory = () => {
-  fs.writeFileSync('alertHistory.json', JSON.stringify(alertHistory));
+  fs.writeFileSync(path.resolve(__dirname, './alertHistory.json'), JSON.stringify(alertHistory));
 };
 
 const CycleThroughStocks = (stockJson) => {
