@@ -4,8 +4,6 @@ const fs = require('fs');
 const https = require('https');
 const path = require('path');
 const winston = require('winston');
-// const {format} = require('winston');
-// const { combine, timestamp, label, prettyPrint } = winston.format;
 require('winston-daily-rotate-file');
 const Secrets = require('./secrets/secrets');// This resource is not in Source Control, replace Secrets.X with your own info
 
@@ -13,7 +11,6 @@ const transport = new winston.transports.DailyRotateFile({
   filename: './StockWatchLog-%DATE%.txt',
   datePattern: 'YYYY-MM-DD',
   maxFiles: '15d',
-  // format: winston.format.colorize(),
 });
 
 const myFormat = winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`);
