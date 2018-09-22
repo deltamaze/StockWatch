@@ -4,13 +4,16 @@ const fs = require('fs');
 const https = require('https');
 const path = require('path');
 const winston = require('winston');
+// const {format} = require('winston');
+// const { combine, timestamp, label, prettyPrint } = winston.format;
 require('winston-daily-rotate-file');
 const Secrets = require('./secrets/secrets');// This resource is not in Source Control, replace Secrets.X with your own info
 
 const transport = new winston.transports.DailyRotateFile({
-  filename: path.resolve(__dirname, './StockWatchLog-%DATE%.txt'),
+  filename: './StockWatchLog-%DATE%.txt',
   datePattern: 'YYYY-MM-DD',
   maxFiles: '15d',
+  // format: winston.format.colorize(),
 });
 
 const myFormat = winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`);
@@ -30,8 +33,8 @@ logger.info('Application Start');
 
 try {
   // Configs
-  const minPercentIncrease = 10;
-  const minNotifyMarketCap = 2000000000;
+  const minPercentIncrease = 20;
+  const minNotifyMarketCap = 3000000000;
   const stockAlertCooldownInMs = (1000 * 60 * 60 * 24 * 7);// 7 days;
   const apiUrl = 'https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_gainers&start=0&count=3';
   logger.info('Config Values');

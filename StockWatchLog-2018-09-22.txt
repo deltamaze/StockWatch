@@ -1,0 +1,28 @@
+2018-09-22T21:40:07.616Z info: Application Start
+2018-09-22T21:40:07.619Z info: Config Values
+2018-09-22T21:40:07.619Z info: Percent Increase Threshold:10
+2018-09-22T21:40:07.620Z info: Min Market Cap Threshold:2000000000
+2018-09-22T21:40:07.620Z info: Alert Cooldown Increase in Days:7
+2018-09-22T21:40:07.620Z info: Parse Alert History Json
+2018-09-22T21:40:07.621Z info: Set up Main Transport
+2018-09-22T21:40:07.623Z info: Pull Top Performing Stocks From Api
+2018-09-22T21:40:08.135Z info: Cycle through Stocks, where thresholds are met
+2018-09-22T21:40:08.138Z info: Stock: SCS matches within boundry conditions
+2018-09-22T21:40:08.139Z info: Ticker: SCS updated in json History file with time: 1537652408139
+2018-09-22T21:40:08.157Z info: Stock: TCMFF matches within boundry conditions
+2018-09-22T21:40:08.158Z info: Ticker: TCMFF updated in json History file with time: 1537652408158
+2018-09-22T21:40:09.900Z info: Email Sent: Stock: SCS 
+        Percent Change: 17.96%
+        Market Cap: 2.223B
+2018-09-22T21:40:10.480Z info: Email Sent: Stock: TCMFF 
+        Percent Change: 13.88%
+        Market Cap: 11.176B
+2018-09-22T21:50:47.354Z info: Application Start
+2018-09-22T21:50:47.357Z info: Config Values
+2018-09-22T21:50:47.357Z info: Percent Increase Threshold:10
+2018-09-22T21:50:47.358Z info: Min Market Cap Threshold:2000000000
+2018-09-22T21:50:47.359Z info: Alert Cooldown Increase in Days:7
+2018-09-22T21:50:47.359Z info: Parse Alert History Json
+2018-09-22T21:50:47.360Z info: Set up Main Transport
+2018-09-22T21:50:47.363Z info: Pull Top Performing Stocks From Api
+2018-09-22T21:50:47.855Z info: Cycle through Stocks, where thresholds are met
