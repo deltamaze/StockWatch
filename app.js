@@ -31,6 +31,7 @@ logger.info('Application Start');
 try {
   // Configs
   const minPercentIncrease = 20;
+  const minAvgDailyVolume = 1000000;
   const minNotifyMarketCap = 3000000000;
   const stockAlertCooldownInMs = (1000 * 60 * 60 * 24 * 7);// 7 days;
   const apiUrl = 'https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_gainers&start=0&count=3';
@@ -97,6 +98,7 @@ try {
     logger.info('Cycle through Stocks, where thresholds are met');
     stockJson.finance.result[0].quotes.forEach((qoute) => {
       if (qoute.marketCap.raw > minNotifyMarketCap
+        && qoute.averageDailyVolume3Month.raw > minAvgDailyVolume
         && qoute.regularMarketChangePercent.raw > minPercentIncrease
         && checkAlertHistory(qoute.symbol)) {
         logger.info(`Stock: ${qoute.symbol} matches within boundry conditions`);
