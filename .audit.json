@@ -6,24 +6,9 @@
     "auditLog": "./.audit.json",
     "files": [
         {
-            "date": 1537562408735,
-            "name": "app-2018-09-21.log",
-            "hash": "63923516366384d37ba957cf5f537694"
-        },
-        {
-            "date": 1537569496626,
-            "name": "StockWatchLog-2018-09-21.txt",
-            "hash": "c3c488efc37f2ed0e26f8412e7b9b2a0"
-        },
-        {
-            "date": 1537652407637,
-            "name": "StockWatchLog-2018-09-22.txt",
-            "hash": "88546b9a46fab7ffdca38ff1cabf4dc4"
-        },
-        {
-            "date": 1537653047380,
-            "name": "c:\\GitHub\\StockWatch\\StockWatchLog-2018-09-22.txt",
-            "hash": "7f58f4a04f701b4393eb3c4aba35837f"
+            "date": 1546567427106,
+            "name": "c:\\GitHub\\StockWatch\\StockWatchLog-2019-01-03.txt",
+            "hash": "16b4f5e128aea551dfee24778624ff9e"
         }
     ]
 }

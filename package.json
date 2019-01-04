@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "axios": "^0.16.2",
     "nodemailer": "4.6.5",
+    "slack-webhook": "^1.0.0",
     "winston": "^3.1.0",
     "winston-daily-rotate-file": "^3.3.2"
   },

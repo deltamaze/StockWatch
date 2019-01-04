@@ -2,6 +2,7 @@
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const https = require('https');
+const SlackWebhook = require('slack-webhook');
 const path = require('path');
 const winston = require('winston');
 require('winston-daily-rotate-file');
@@ -35,7 +36,7 @@ try {
   // const minAvgDailyVolume = 1000000;
   // const minNotifyMarketCap = 3000000000;
   // to debug lets lower thresholds
-  const minPercentIncrease = 10;
+  const minPercentIncrease = 5;
   const minAvgDailyVolume = 10;
   const minNotifyMarketCap = 300;
   const stockAlertCooldownInMs = (1000 * 60 * 60 * 24 * 7);// 7 days;
@@ -76,6 +77,56 @@ try {
   const sendEmailTest = (msg) => { // eslint-disable-line no-unused-vars
     logger.info(msg); // eslint-disable-line no-console
   };
+  const sendMessageSlack = (msg) => {
+    const slack = new SlackWebhook(Secrets.slackHookUrl, {
+      defaults: {
+        username: 'StockWatchBot',
+        channel: '#Money',
+        icon_emoji: ':robot_face:',
+      },
+    });
+
+    slack.send(msg);
+
+    // const data = JSON.stringify({
+    //   text: msg,
+    // });
+    // const options = {
+    //   hostname: Secrets.slackWebHookUrl,
+    //   method: 'POST',
+    //   // port: 443,
+    //   path: Secrets.slackWebHookPath,
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Content-Length': data.length,
+    //   },
+    // };
+
+    // const req = https.request(options, (res) => {
+    //   logger.info(`Slack Post statusCode: ${res.statusCode}`);
+
+    //   res.on('data', (d) => {
+    //     process.stdout.write(d);
+    //   });
+    // });
+
+    // req.on('error', (error) => {
+    //   logger.error(error);
+    // });
+
+    // req.write(data);
+    // req.end();
+
+    // $.ajax({
+    //     data: 'payload=' + JSON.stringify({
+    //         "text": text
+    //     }),
+    //     dataType: 'json',
+    //     processData: false,
+    //     type: 'POST',
+    //     url: url
+    // });
+  };
   // End Email Config
 
   // Business Logic Functions
@@ -108,7 +159,7 @@ try {
         && checkAlertHistory(qoute.symbol)) {
         logger.info(`Stock: ${qoute.symbol} matches within boundry conditions`);
         updateAlertHistory(qoute.symbol);
-        sendEmailTest(`Stock:  ${qoute.longName} ( ${qoute.symbol} )
+        sendMessageSlack(`Stock:  ${qoute.longName} ( ${qoute.symbol} )
         Percent Change: ${qoute.regularMarketChangePercent.fmt}
         Market Cap: ${qoute.marketCap.fmt}`);
       }
@@ -127,10 +178,10 @@ try {
       CycleThroughStocks(stockInfo);
     });
   });
+  // sendMessageSlack('Wiljum Test Message');
 } catch (err) {
   logger.error(`Unexpected Error: ${err}`);
 }
 // post to slack
 // unit test
 // mock api data
-// format text with full name of stock, instead of just symbol
