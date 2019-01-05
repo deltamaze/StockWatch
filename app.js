@@ -159,7 +159,7 @@ try {
         && checkAlertHistory(qoute.symbol)) {
         logger.info(`Stock: ${qoute.symbol} matches within boundry conditions`);
         updateAlertHistory(qoute.symbol);
-        sendMessageSlack(`Stock:  ${qoute.longName} ( ${qoute.symbol} )
+        sendMessageSlack(`Stock:  ${qoute.longName} : https://finance.yahoo.com/quote/${qoute.symbol}/
         Percent Change: ${qoute.regularMarketChangePercent.fmt}
         Market Cap: ${qoute.marketCap.fmt}`);
       }
@@ -182,6 +182,7 @@ try {
 } catch (err) {
   logger.error(`Unexpected Error: ${err}`);
 }
-// post to slack
+
+
 // unit test
 // mock api data
