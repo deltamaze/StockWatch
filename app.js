@@ -32,13 +32,13 @@ logger.info('Application Start');
 try {
   // Configs
 
-  // const minPercentIncrease = 20;
-  // const minAvgDailyVolume = 1000000;
-  // const minNotifyMarketCap = 3000000000;
+  const minPercentIncrease = 20;
+  const minAvgDailyVolume = 1000000;
+  const minNotifyMarketCap = 2000000000;
   // to debug lets lower thresholds
-  const minPercentIncrease = 5;
-  const minAvgDailyVolume = 10;
-  const minNotifyMarketCap = 300;
+  // const minPercentIncrease = 5;
+  // const minAvgDailyVolume = 10;
+  // const minNotifyMarketCap = 300;
   const stockAlertCooldownInMs = (1000 * 60 * 60 * 24 * 7);// 7 days;
   const apiUrl = 'https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_gainers&start=0&count=3';
   logger.info('Config Values');
@@ -77,7 +77,7 @@ try {
   const sendEmailTest = (msg) => { // eslint-disable-line no-unused-vars
     logger.info(msg); // eslint-disable-line no-console
   };
-  const sendMessageSlack = (msg) => {
+  const sendMessageSlack = (msg) => { // eslint-disable-line no-unused-vars
     const slack = new SlackWebhook(Secrets.slackHookUrl, {
       defaults: {
         username: 'StockWatchBot',
@@ -159,7 +159,7 @@ try {
         && checkAlertHistory(qoute.symbol)) {
         logger.info(`Stock: ${qoute.symbol} matches within boundry conditions`);
         updateAlertHistory(qoute.symbol);
-        sendMessageSlack(`Stock:  ${qoute.longName} : https://finance.yahoo.com/quote/${qoute.symbol}/
+        sendEmailTest(`Stock:  ${qoute.longName} : https://finance.yahoo.com/quote/${qoute.symbol}/
         Percent Change: ${qoute.regularMarketChangePercent.fmt}
         Market Cap: ${qoute.marketCap.fmt}`);
       }
@@ -178,7 +178,6 @@ try {
       CycleThroughStocks(stockInfo);
     });
   });
-  // sendMessageSlack('Wiljum Test Message');
 } catch (err) {
   logger.error(`Unexpected Error: ${err}`);
 }
