@@ -1,5 +1,11 @@
 {
-    "extends": "airbnb-base",
+    "extends": ["airbnb-base","plugin:jasmine/recommended"],
+    "plugins": [
+        "jasmine"
+    ],
+    "env": {
+        "jasmine": true
+    },
     "rules": {
         "linebreak-style": ["error", "windows"]
     }
