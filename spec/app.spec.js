@@ -10,27 +10,43 @@
 // json can serialize
 // post message has percentage and stock name
 
-describe("A suite", function() {
-  it("contains spec with an expectation", function() {
-    expect(true).toBe(true);
-  });
+
+describe("The Logger", function() {
+  it("can write to a file on the local machine", function() {
+  expect(false).toBe(true);
+});
 });
 
-describe("A suite is just a function", function() {
-  var a;
-
-  it("and so is a spec", function() {
-    a = true;
-
-    expect(a).toBe(true);
-  });
+describe("Yahoo Api", function() {
+  it("returns 3 stocks", function() {
+  expect(false).toBe(true);
+});
 });
 
-describe("The 'toBe' matcher compares with ===", function() {
-  it("and has a positive case", function() {
-  expect(true).toBe(true);
+describe("Slack Messenger", function() {
+  it("can post a message to slack", function() {
+  expect(false).toBe(true);
 });
-it("and can have a negative case", function() {
-  expect(false).not.toBe(true);
+});
+
+describe("StockWatch Algorithm", function() {
+  it("Can serialize yahoo stock json", function() {
+  expect(false).toBe(true);
+});
+
+it("Can pull a history of whats been sent before", function() {
+  expect(false).toBe(true);
+});
+
+it("Can write to the history file of what was just sent", function() {
+  expect(false).toBe(true);
+});
+
+it("Wont send alert if symbol within cooldown period", function() {
+  expect(false).toBe(true);
+});
+
+it("Will send alert when symbol off cooldown period, and update cooldown", function() {
+  expect(false).toBe(true);
 });
 });
