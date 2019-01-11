@@ -9,7 +9,7 @@
 // webapi returns json
 // json can serialize
 // post message has percentage and stock name
-
+let app
 
 describe('The Logger', () => {
   it('can write to a file on the local machine', () => {
