@@ -42,36 +42,36 @@ class StockWatch {
     this.logger.info(`Percent Increase Threshold:${this.minPercentIncrease.toString()}`);
     this.logger.info(`Min Market Cap Threshold:${this.minNotifyMarketCap.toString()}`);
     this.logger.info(`Alert Cooldown Increase in Days:${(this.stockAlertCooldownInMs / (1000 * 60 * 60 * 24)).toString()}`);
+
+    this.alertHistory = JSON.parse(fs.readFileSync(path.resolve(__dirname, './alertHistory.json')));
   }
 
   sendMessageSlack(msg) { // eslint-disable-line no-unused-vars
-    const slack = new SlackWebhook(Secrets.slackHookUrl, {
+    this.slack = new SlackWebhook(Secrets.slackHookUrl, {
       defaults: {
         username: 'StockWatchBot',
         channel: '#Money',
         icon_emoji: ':robot_face:',
       },
     });
-    slack.send(msg);
+    this.slack.send(msg);
   }
 
-  startService() {
+  checkAlertHistory(ticker) { // eslint-disable-line no-unused-vars
+    if (this.alertHistory[ticker] == null) {
+      return true;
+    }
+    if (this.alertHistory[ticker].alertTime < (Date.now() - this.stockAlertCooldownInMs)) {
+      return true;
+    }
+    return false;
+  }
+
+  runService() {
     try {
       this.logger.info('Parse Alert History Json');
-      const alertHistory = JSON.parse(fs.readFileSync(path.resolve(__dirname, './alertHistory.json')));
-
-
+      
       // Business Logic Functions
-
-      const checkAlertHistory = (ticker) => { // eslint-disable-line no-unused-vars
-        if (alertHistory[ticker] == null) {
-          return true;
-        }
-        if (alertHistory[ticker].alertTime < (Date.now() - stockAlertCooldownInMs)) {
-          return true;
-        }
-        return false;
-      };
 
       const updateAlertHistory = (ticker) => { // eslint-disable-line no-unused-vars
         alertHistory[ticker] = { alertTime: Date.now() };
