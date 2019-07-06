@@ -25,3 +25,5 @@ yarn-error.log*
 
 # active stock history file, now that the initial has been checked initial
 alertHistory.json
+
+StockWatchLog*

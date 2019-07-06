@@ -147,7 +147,7 @@ try {
   };
 
   const saveAlertHistory = () => {
-    fs.writeFileSync(path.resolve(__dirname, './alertHistory.json'), JSON.stringify(alertHistory));
+    fs.writeFileSync(path.resolve(__dirname, './alertHistory.json'), JSON.stringify(alertHistory)); 
   };
 
   const CycleThroughStocks = (stockJson) => {
