@@ -11,7 +11,7 @@ const Secrets = require('./secrets/secrets');// This resource is not in Source C
 const transport = new winston.transports.DailyRotateFile({
   filename: path.resolve(__dirname, './StockWatchLog-%DATE%.txt'),
   datePattern: 'YYYY-MM-DD',
-  maxFiles: '15d',
+  maxFiles: '15',
 });
 
 const myFormat = winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`);
@@ -87,47 +87,7 @@ try {
     });
 
     slack.send(msg);
-
-    // const data = JSON.stringify({
-    //   text: msg,
-    // });
-    // const options = {
-    //   hostname: Secrets.slackWebHookUrl,
-    //   method: 'POST',
-    //   // port: 443,
-    //   path: Secrets.slackWebHookPath,
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Content-Length': data.length,
-    //   },
-    // };
-
-    // const req = https.request(options, (res) => {
-    //   logger.info(`Slack Post statusCode: ${res.statusCode}`);
-
-    //   res.on('data', (d) => {
-    //     process.stdout.write(d);
-    //   });
-    // });
-
-    // req.on('error', (error) => {
-    //   logger.error(error);
-    // });
-
-    // req.write(data);
-    // req.end();
-
-    // $.ajax({
-    //     data: 'payload=' + JSON.stringify({
-    //         "text": text
-    //     }),
-    //     dataType: 'json',
-    //     processData: false,
-    //     type: 'POST',
-    //     url: url
-    // });
   };
-  // End Email Config
 
   // Business Logic Functions
 
