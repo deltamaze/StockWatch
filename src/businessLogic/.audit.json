@@ -1,0 +1,14 @@
+{
+    "keep": {
+        "days": false,
+        "amount": 15
+    },
+    "auditLog": "c:\\Github\\StockWatch\\src\\businessLogic/.audit.json",
+    "files": [
+        {
+            "date": 1579664968580,
+            "name": "c:\\Github\\StockWatch\\src\\businessLogic\\StockWatchLog-2020-01-21.txt",
+            "hash": "476cb6a35be322229fbc7774dfb047ce"
+        }
+    ]
+}
