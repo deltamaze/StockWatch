@@ -7,6 +7,11 @@
         "jasmine": true
     },
     "rules": {
-        "linebreak-style": ["error", "windows"]
+        "indent":["error", 2],
+        "linebreak-style": 0,
+        "comma-dangle":0,
+        "import/prefer-default-export": 0,
+        "import/no-mutable-exports":0,
+        "eqeqeq": 0
     }
 }
