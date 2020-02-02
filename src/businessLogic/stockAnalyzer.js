@@ -85,7 +85,7 @@ class StockAnalyzer {
     );
   }
 
-  CycleThroughStocks(stockJson) {
+  cycleThroughStocks(stockJson) {
     this.logger.info('Cycle through Stocks, where thresholds are met');
     stockJson.finance.result[0].quotes.forEach((qoute) => {
       if (qoute.marketCap.raw > this.configuration.minNotifyMarketCap
@@ -124,7 +124,7 @@ class StockAnalyzer {
         });
         response.on('end', () => {
           const stockInfo = JSON.parse(body);
-          this.CycleThroughStocks(stockInfo);
+          this.cycleThroughStocks(stockInfo);
         });
       });
       // sendMessageSlack('Wiljum Test Message');
