@@ -1,12 +1,11 @@
 // import npm/node packages
 
 const fs = require('fs');
-const https = require('https');
 const SlackWebhook = require('slack-webhook');
 const path = require('path');
 const winston = require('winston');
 require('winston-daily-rotate-file');
-
+const StocksApi = require('../services/yahooService');
 // get api keys n stuff
 const Secrets = require('../../secrets/secrets');// This resource is not in Source Control, replace Secrets.X with your own info
 
@@ -106,31 +105,46 @@ class StockAnalyzer {
     this.logger.info('Application Start');
 
 
-    try {
-      // log config values
-
-      this.logger.info('Config Values');
-      this.logger.info(`Percent Increase Threshold:${this.configuration.minPercentIncrease.toString()}`);
-      this.logger.info(`Min Market Cap Threshold:${this.configuration.minNotifyMarketCap.toString()}`);
-      this.logger.info(`Alert Cooldown Increase in Days:${(this.stockAlertCooldownInMs / (1000 * 60 * 60 * 24)).toString()}`);
+    this.logger.info('Config Values');
+    this.logger.info(`Percent Increase Threshold:${this.configuration.minPercentIncrease.toString()}`);
+    this.logger.info(`Min Market Cap Threshold:${this.configuration.minNotifyMarketCap.toString()}`);
+    this.logger.info(`Alert Cooldown Increase in Days:${(this.stockAlertCooldownInMs / (1000 * 60 * 60 * 24)).toString()}`);
 
 
-      this.logger.info('Pull Top Performing Stocks From Api');
-      // Pull Stocks info from API
-      https.get(this.configuration.apiTopGainerUrl, (response) => {
-        let body = '';
-        response.on('data', (chunk) => {
-          body += chunk;
-        });
-        response.on('end', () => {
-          const stockInfo = JSON.parse(body);
-          this.cycleThroughStocks(stockInfo);
-        });
-      });
-      // sendMessageSlack('Wiljum Test Message');
-    } catch (err) {
-      this.logger.error(`Unexpected Error: ${err}`);
-    }
+    this.logger.info('Pull Top Performing Stocks From Api');
+
+    Promise.all([StocksApi.getGainerStocks(), StocksApi.getLoserStocks()]).then((data) => {
+      console.log('Promise Resolved');
+      console.log(data);
+    }).catch(
+      (err) => {
+        console.log('Promise Reject');
+        console.log(err);
+      }
+    );
+    // StocksApi.getStocks().then((data) => {
+    //   console.log('Promise Resolved');
+    //   console.log(data);
+    // }).catch(
+    //   (err) => {
+    //     console.log('Promise Reject');
+    //     console.log(err);
+    //   }
+    // );
+    // Pull Stocks info from API
+    //   https.get(this.configuration.apiTopGainerUrl, (response) => {
+    //     let body = '';
+    //     response.on('data', (chunk) => {
+    //       body += chunk;
+    //     });
+    //     response.on('end', () => {
+    //       const stockInfo = JSON.parse(body);
+    //       this.cycleThroughStocks(stockInfo);
+    //     });
+    //   });
+    // } catch (err) {
+    //   this.logger.error(`Unexpected Error: ${err}`);
+    // }
   }
 }
 module.exports = StockAnalyzer;
