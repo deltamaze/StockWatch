@@ -113,24 +113,23 @@ class StockAnalyzer {
 
     this.logger.info('Pull Top Performing Stocks From Api');
 
-    Promise.all([StocksApi.getGainerStocks(), StocksApi.getLoserStocks()]).then((data) => {
+    Promise.all([
+      StocksApi.getStocks(this.configuration.apiTopGainerUrl),
+      StocksApi.getStocks(this.configuration.apiTopLoserUrl)
+    ]).then((data) => {
       console.log('Promise Resolved');
-      console.log(data);
+      // expected returned json objects for both web calls.
+      // find the child element/array we need and merge them together
+      const combinedStocks = data[0].finance.result[0].concact(data[1].finance.result);
+      // data[0].concat(data[1]);
+      console.log(combinedStocks);
     }).catch(
       (err) => {
         console.log('Promise Reject');
         console.log(err);
       }
     );
-    // StocksApi.getStocks().then((data) => {
-    //   console.log('Promise Resolved');
-    //   console.log(data);
-    // }).catch(
-    //   (err) => {
-    //     console.log('Promise Reject');
-    //     console.log(err);
-    //   }
-    // );
+
     // Pull Stocks info from API
     //   https.get(this.configuration.apiTopGainerUrl, (response) => {
     //     let body = '';
