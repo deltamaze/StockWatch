@@ -89,7 +89,7 @@ class StockAnalyzer {
     stockJson.finance.result[0].quotes.forEach((qoute) => {
       if (qoute.marketCap.raw > this.configuration.minNotifyMarketCap
         && qoute.averageDailyVolume3Month.raw > this.configuration.minAvgDailyVolume
-        && qoute.regularMarketChangePercent.raw > this.configuration.minPercentIncrease
+        && Math.abs(qoute.regularMarketChangePercent.raw) > this.configuration.minPercentIncrease
         && this.checkAlertHistory(qoute.symbol)) {
         this.logger.info(`Stock: ${qoute.symbol} matches within boundry conditions`);
         this.updateAlertHistory(qoute.symbol);
@@ -117,16 +117,13 @@ class StockAnalyzer {
       StocksApi.getStocks(this.configuration.apiTopGainerUrl),
       StocksApi.getStocks(this.configuration.apiTopLoserUrl)
     ]).then((data) => {
-      console.log('Promise Resolved');
       // expected returned json objects for both web calls.
       // find the child element/array we need and merge them together
-      const combinedStocks = data[0].finance.result.concat(data[1].finance.result);
-      // data[0].concat(data[1]);
-      console.log(combinedStocks);
+      this.cycleThroughStocks(data[0]);// gains
+      this.cycleThroughStocks(data[1]);// loss
     }).catch(
       (err) => {
-        console.log('Promise Reject');
-        console.log(err);
+        this.logger.error((`Unexpected Error: ${err}`));
       }
     );
 
