@@ -120,7 +120,7 @@ class StockAnalyzer {
       console.log('Promise Resolved');
       // expected returned json objects for both web calls.
       // find the child element/array we need and merge them together
-      const combinedStocks = data[0].finance.result[0].concact(data[1].finance.result);
+      const combinedStocks = data[0].finance.result.concat(data[1].finance.result);
       // data[0].concat(data[1]);
       console.log(combinedStocks);
     }).catch(
