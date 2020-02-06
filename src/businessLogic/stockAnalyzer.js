@@ -1,11 +1,12 @@
 // import npm/node packages
 
 const fs = require('fs');
-const SlackWebhook = require('slack-webhook');
+// const SlackWebhook = require('slack-webhook');
 const path = require('path');
 const winston = require('winston');
 require('winston-daily-rotate-file');
 const StocksApi = require('../services/yahooService');
+const SendMessageSlack = require('../services/slackService');
 // get api keys n stuff
 const Secrets = require('../../secrets/secrets');// This resource is not in Source Control, replace Secrets.X with your own info
 
@@ -54,24 +55,6 @@ class StockAnalyzer {
     return false;
   }
 
-  sendMessageTest(msg) { // eslint-disable-line no-unused-vars
-    this.logger.info(msg); // eslint-disable-line no-console
-  }
-
-  sendMessageSlack(msg) {
-    this.logger.info(msg);
-    this.logger.info('Pushing message to Slack');
-    const slack = new SlackWebhook(Secrets.slackHookUrl, {
-      defaults: {
-        username: 'StockWatchBot',
-        channel: '#Money',
-        icon_emoji: ':robot_face:',
-      },
-    });
-
-    slack.send(msg);
-  }
-
   updateAlertHistory(ticker) { // eslint-disable-line no-unused-vars
     this.alertHistory[ticker] = { alertTime: Date.now() };
     this.logger.info(`Ticker: ${ticker} updated in json History file with time: ${this.alertHistory[ticker].alertTime}`);
@@ -87,15 +70,22 @@ class StockAnalyzer {
   cycleThroughStocks(stockJson) {
     this.logger.info('Cycle through Stocks, where thresholds are met');
     stockJson.finance.result[0].quotes.forEach((qoute) => {
-      if (qoute.marketCap.raw > this.configuration.minNotifyMarketCap
+      if (
+        (typeof qoute.marketCap != 'undefined')
+        && (typeof qoute.averageDailyVolume3Month != 'undefined')
+        && (typeof qoute.regularMarketChangePercent != 'undefined')
+        && qoute.marketCap.raw > this.configuration.minNotifyMarketCap
         && qoute.averageDailyVolume3Month.raw > this.configuration.minAvgDailyVolume
-        && Math.abs(qoute.regularMarketChangePercent.raw) > this.configuration.minPercentIncrease
+        && Math.abs(qoute.regularMarketChangePercent.raw) > this.configuration.minPercentChange
         && this.checkAlertHistory(qoute.symbol)) {
         this.logger.info(`Stock: ${qoute.symbol} matches within boundry conditions`);
         this.updateAlertHistory(qoute.symbol);
-        this.sendMessageTest(`Stock:  ${qoute.longName} : https://finance.yahoo.com/quote/${qoute.symbol}/
+        const msg = `Stock:  ${qoute.longName} : https://finance.yahoo.com/quote/${qoute.symbol}/
         Percent Change: ${qoute.regularMarketChangePercent.fmt}
-        Market Cap: ${qoute.marketCap.fmt}`);
+        Market Cap: ${qoute.marketCap.fmt}`;
+        this.logger.info(msg);
+        this.logger.info('Pushing message to Slack');
+        SendMessageSlack(msg, Secrets.slackHookUrl);
       }
     });
     this.saveAlertHistory();
@@ -106,9 +96,9 @@ class StockAnalyzer {
 
 
     this.logger.info('Config Values');
-    this.logger.info(`Percent Increase Threshold:${this.configuration.minPercentIncrease.toString()}`);
+    this.logger.info(`Percent Change Threshold:${this.configuration.minPercentChange.toString()}`);
     this.logger.info(`Min Market Cap Threshold:${this.configuration.minNotifyMarketCap.toString()}`);
-    this.logger.info(`Alert Cooldown Increase in Days:${(this.stockAlertCooldownInMs / (1000 * 60 * 60 * 24)).toString()}`);
+    this.logger.info(`Alert Cooldown in Days:${(this.stockAlertCooldownInMs / (1000 * 60 * 60 * 24)).toString()}`);
 
 
     this.logger.info('Pull Top Performing Stocks From Api');
@@ -126,21 +116,6 @@ class StockAnalyzer {
         this.logger.error((`Unexpected Error: ${err}`));
       }
     );
-
-    // Pull Stocks info from API
-    //   https.get(this.configuration.apiTopGainerUrl, (response) => {
-    //     let body = '';
-    //     response.on('data', (chunk) => {
-    //       body += chunk;
-    //     });
-    //     response.on('end', () => {
-    //       const stockInfo = JSON.parse(body);
-    //       this.cycleThroughStocks(stockInfo);
-    //     });
-    //   });
-    // } catch (err) {
-    //   this.logger.error(`Unexpected Error: ${err}`);
-    // }
   }
 }
 module.exports = StockAnalyzer;

@@ -1,5 +1,5 @@
 {
-  "minPercentIncrease":20,
+  "minPercentChange":20,
   "minAvgDailyVolume":500000,
   "minNotifyMarketCap":2000000000,
   "stockAlertCooldownInDays":7,
