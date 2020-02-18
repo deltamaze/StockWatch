@@ -1,10 +1,10 @@
 {
-    "extends": ["airbnb-base","plugin:jasmine/recommended"],
+    "extends": ["airbnb-base","plugin:jest/recommended"],
     "plugins": [
-        "jasmine"
+        "jest"
     ],
     "env": {
-        "jasmine": true
+        "jest": true
     },
     "rules": {
         "indent":["error", 2],

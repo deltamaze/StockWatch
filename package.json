@@ -8,11 +8,14 @@
     "winston": "^3.1.0",
     "winston-daily-rotate-file": "^3.3.2"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "jest"
+  },
   "devDependencies": {
     "eslint": "^5.6.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jasmine": "^2.10.1"
+    "eslint-plugin-jest": "^23.7.0",
+    "jest": "^25.1.0"
   }
 }
