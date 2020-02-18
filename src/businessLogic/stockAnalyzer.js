@@ -60,7 +60,7 @@ class StockAnalyzer {
     this.logger.info(`Ticker: ${ticker} updated in json History file with time: ${this.alertHistory[ticker].alertTime}`);
   }
 
-  saveAlertHistory() {
+  saveAlertHistory() { //  refactorTD: move to FileIntegration service
     fs.writeFileSync(
       path.resolve(__dirname, this.alertHistoryPath),
       JSON.stringify(this.alertHistory)
@@ -79,7 +79,7 @@ class StockAnalyzer {
         && Math.abs(qoute.regularMarketChangePercent.raw) > this.configuration.minPercentChange
         && this.checkAlertHistory(qoute.symbol)) {
         this.logger.info(`Stock: ${qoute.symbol} matches within boundry conditions`);
-        this.updateAlertHistory(qoute.symbol);
+        this.updateAlertHistory(qoute.symbol); //  refactorTD: pull out and test
         const msg = `Stock:  ${qoute.longName} : https://finance.yahoo.com/quote/${qoute.symbol}/
         Percent Change: ${qoute.regularMarketChangePercent.fmt}
         Market Cap: ${qoute.marketCap.fmt}`;
@@ -88,7 +88,7 @@ class StockAnalyzer {
         SendMessageSlack(msg, Secrets.slackHookUrl);
       }
     });
-    this.saveAlertHistory();
+    this.saveAlertHistory(); // refactorTD: pull out
   }
 
   startService() {
