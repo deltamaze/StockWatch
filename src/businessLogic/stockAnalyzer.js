@@ -60,13 +60,6 @@ class StockAnalyzer {
     this.logger.info(`Ticker: ${ticker} updated in json History file with time: ${this.alertHistory[ticker].alertTime}`);
   }
 
-  saveAlertHistory() { //  refactorTD: move to FileIntegration service
-    fs.writeFileSync(
-      path.resolve(__dirname, this.alertHistoryPath),
-      JSON.stringify(this.alertHistory)
-    );
-  }
-
   cycleThroughStocks(stockJson) {
     this.logger.info('Cycle through Stocks, where thresholds are met');
     stockJson.finance.result[0].quotes.forEach((qoute) => {
@@ -88,7 +81,6 @@ class StockAnalyzer {
         SendMessageSlack(msg, Secrets.slackHookUrl);
       }
     });
-    this.saveAlertHistory(); // refactorTD: pull out
   }
 
   startService() {
@@ -111,6 +103,10 @@ class StockAnalyzer {
       // find the child element/array we need and merge them together
       this.cycleThroughStocks(data[0]);// gains
       this.cycleThroughStocks(data[1]);// loss
+      fs.writeFileSync(
+        path.resolve(__dirname, this.alertHistoryPath),
+        JSON.stringify(this.alertHistory)
+      );
     }).catch(
       (err) => {
         this.logger.error((`Unexpected Error: ${err}`));
