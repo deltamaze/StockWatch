@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "nodemailer": "4.6.5",
+    "nodemailer": "6.4.16",
     "slack-webhook": "^1.0.0",
     "winston": "^3.1.0",
     "winston-daily-rotate-file": "^3.3.2"
