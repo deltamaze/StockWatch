@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "yz31YnIqLWWFlkuxsiJ+L8V2ukBMBF1H8z93FqE7gj3QCmjpMmVLGIsMJE3tYmXqygAy20f7oAUih0MKO6MyJg==",
+  "success": true,
+  "projectFilePath": "C:\\git\\StockWatch\\StockWatch.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\wcpoo\\.nuget\\packages\\autofac\\6.2.0\\autofac.6.2.0.nupkg.sha512",
+    "C:\\Users\\wcpoo\\.nuget\\packages\\system.diagnostics.diagnosticsource\\4.7.1\\system.diagnostics.diagnosticsource.4.7.1.nupkg.sha512"
+  ],
+  "logs": []
+}

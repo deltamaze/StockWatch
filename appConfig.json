@@ -1,8 +1,0 @@
-{
-  "minPercentChange":20,
-  "minAvgDailyVolume":500000,
-  "minNotifyMarketCap":2000000000,
-  "stockAlertCooldownInDays":7,
-  "apiTopGainerUrl":"https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_gainers&start=0&count=3",
-  "apiTopLoserUrl":"https://query2.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_losers&start=0&count=3"
-}
