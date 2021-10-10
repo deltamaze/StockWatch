@@ -1,0 +1,8 @@
+/bin/*
+obj/*
+obj*
+*.dll
+obj/Debug/net5.0/StockWatch.dll
+*.dll
+*.pdb
+*.cache
