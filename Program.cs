@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 
 namespace StockWatch
 {
@@ -12,6 +13,7 @@ namespace StockWatch
                 var app= scope.Resolve<IApplication>();
                 app.Run();
             }
+            Console.ReadKey();
         }
     }
 }
