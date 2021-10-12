@@ -1,6 +1,7 @@
 using Autofac;
 using StockWatch.Logging;
 using StockWatch.Data;
+using StockWatch.Stocks;
 
 namespace StockWatch
 {

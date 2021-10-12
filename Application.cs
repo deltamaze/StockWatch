@@ -1,12 +1,12 @@
 using StockWatch.Logging;
-
+using StockWatch.Stocks;
 namespace StockWatch
 {
 
     class Application : IApplication
     {
         private ILoggingProcessor logger;
-        public Application(ILoggingProcessor logger)
+        public Application(ILoggingProcessor logger, IStocks stockApi)
         {
             this.logger = logger;
         }
