@@ -1,20 +1,33 @@
+using System.Collections.Generic;
 using StockWatch.Logging;
-using StockWatch.Stocks;
+using StockWatch.Assets;
+
+
 namespace StockWatch
 {
 
     class Application : IApplication
     {
         private ILoggingProcessor logger;
-        public Application(ILoggingProcessor logger, IStocks stockApi)
+        private IAssets[] assetProviders;
+        public Application(ILoggingProcessor logger, IAssets[] assetProviders)
         {
             this.logger = logger;
+            this.assetProviders = assetProviders;
         }
 
 
         public void Run()
         {
             logger.Info("Starting Run");
+            List<AssetModel> assets = new List<AssetModel>();
+            // foreach(var assetProvider in assetProviders){
+            //     assets.AddRange(assetProvider.GainingAssets());
+            // }
+            foreach(var assetProvider in assetProviders){
+                assets.AddRange(assetProvider.LosingAssets());
+            }
+            
             // Pull stocks into context
             // Pull top stocks
             // Pull bad performing stocks
