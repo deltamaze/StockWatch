@@ -21,9 +21,9 @@ namespace StockWatch
         {
             logger.Info("Starting Run");
             List<AssetModel> assets = new List<AssetModel>();
-            // foreach(var assetProvider in assetProviders){
-            //     assets.AddRange(assetProvider.GainingAssets());
-            // }
+            foreach(var assetProvider in assetProviders){
+                assets.AddRange(assetProvider.GainingAssets());
+            }
             foreach(var assetProvider in assetProviders){
                 assets.AddRange(assetProvider.LosingAssets());
             }

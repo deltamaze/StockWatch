@@ -7,6 +7,8 @@ namespace StockWatch.Assets
         public string Url { get; set; }
         public decimal MarketCap { get; set; }
         public decimal PercentChange { get; set; }
+        public decimal AvgVolume { get; set; }
+        public decimal UnitPrice { get; set; }
     }
     
 }

@@ -15,27 +15,47 @@ namespace StockWatch.Assets
         private const string LosingStocksUrl =  "https://query2.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=day_losers&start=0&count=10";
 
         private static readonly HttpClient client = new HttpClient();
-        public YahooStocks()
-        {
-        }
+
         public IEnumerable<AssetModel> GainingAssets()
         {
-
-            WebClient client = new WebClient();
-            string reply = client.DownloadString(GainingStocksUrl);
-            YahooStockModel parsedReply = JsonSerializer.Deserialize<YahooStockModel>(reply);
-
-
-
-            throw new System.Exception("Not Implemented");
+            YahooStockModel assets = GetYahooStocks(GainingStocksUrl);
+            return ParseYahooStocks(assets);
         }
         public IEnumerable<AssetModel> LosingAssets()
         {
+            YahooStockModel assets = GetYahooStocks(LosingStocksUrl);
+            return ParseYahooStocks(assets);
+        }
+        private YahooStockModel GetYahooStocks(string url)
+        {
             WebClient client = new WebClient();
-            string reply = client.DownloadString(LosingStocksUrl);
-            YahooStockModel parsedReply = JsonSerializer.Deserialize<YahooStockModel>(reply);
-
-            throw new System.Exception("Not Implemented");
+            string reply = client.DownloadString(url);
+            return JsonSerializer.Deserialize<YahooStockModel>(reply);
+        }
+        private List<AssetModel> ParseYahooStocks(YahooStockModel yahooStocks)
+        {
+            List<AssetModel> returnList = new List<AssetModel>();
+            // null checks
+            if(
+                yahooStocks == null ||
+                yahooStocks.finance == null ||
+                yahooStocks.finance.result == null ||
+                yahooStocks.finance.result.Count < 1 ||
+                yahooStocks.finance.result[0].quotes == null)
+            {
+                return returnList;
+            }
+            foreach(var quote in yahooStocks.finance.result[0].quotes)
+            {
+                AssetModel stock = new AssetModel();
+                stock.Company = quote.displayName;
+                stock.Symbol = quote.symbol;
+                stock.MarketCap = decimal.Parse(quote.marketCap.longFmt.Replace(",",""));
+                stock.PercentChange = ((decimal)quote.regularMarketChangePercent.raw);
+                returnList.Add(stock);
+            }
+            return returnList;
+            
         }
     }
 }
