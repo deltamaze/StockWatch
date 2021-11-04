@@ -1,3 +1,5 @@
+using System;
+
 namespace StockWatch.Assets
 {
     public class AssetModel
@@ -9,6 +11,7 @@ namespace StockWatch.Assets
         public decimal PercentChange { get; set; }
         public decimal AvgVolume { get; set; }
         public decimal UnitPrice { get; set; }
+        public DateTime ReportDate { get; set; }
     }
     
 }

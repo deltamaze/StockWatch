@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 namespace StockWatch.Assets
 {
-    public class StubAssets : IAssets
+    public class StubAssetsProvider : IAssetsProvider
     {
-        public IEnumerable<AssetModel> GainingAssets()
+        public IEnumerable<AssetModel> GetAssets()
         {
             List<AssetModel> returnAssets = new List<AssetModel>();
             returnAssets.Add(new AssetModel(){
@@ -21,11 +21,6 @@ namespace StockWatch.Assets
                 MarketCap = 900002.1M,
                 PercentChange = 0.24M
             });
-            return returnAssets;
-        }
-        public IEnumerable<AssetModel> LosingAssets()
-        {
-            List<AssetModel> returnAssets = new List<AssetModel>();
             returnAssets.Add(new AssetModel(){
                 Company="Test3",
                 Symbol="TST3",

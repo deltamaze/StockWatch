@@ -7,13 +7,21 @@ namespace StockWatch
     {
         static void Main(string[] args)
         {
-            var container = ContainerConfig.Configure();
+            try
+            {
+                var container = ContainerConfig.Configure();
 
-            using(var scope = container.BeginLifetimeScope()){
-                var app= scope.Resolve<IApplication>();
-                app.Run();
+                using(var scope = container.BeginLifetimeScope()){
+                    var app= scope.Resolve<IApplication>();
+                    app.Run();
+                }
             }
-            Console.ReadKey();
+            catch(Exception ex)
+            {
+                Console.WriteLine("Unhandled Exception");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
         }
     }
 }

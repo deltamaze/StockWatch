@@ -1,6 +1,8 @@
 using System.Collections.Generic;
-using StockWatch.Logging;
 using StockWatch.Assets;
+using StockWatch.Data;
+using StockWatch.Logging;
+using StockWatch.Notifiers;
 
 
 namespace StockWatch
@@ -9,33 +11,37 @@ namespace StockWatch
     class Application : IApplication
     {
         private ILoggingProcessor logger;
-        private IAssets[] assetProviders;
-        public Application(ILoggingProcessor logger, IAssets[] assetProviders)
+        private IAssetProcessor assetProcessors;
+        private RunTimeData runData;
+        private IDatabaseProvider dbProvider;
+        private INotifierProcessor notifierProcessor;
+        public Application(ILoggingProcessor logger,
+            IAssetProcessor assetProcessors,
+            RunTimeData runData,
+            IDatabaseProvider dbProvider,
+            INotifierProcessor notifierProcessor
+        )
         {
             this.logger = logger;
-            this.assetProviders = assetProviders;
+            this.assetProcessors = assetProcessors;
+            this.runData = runData;
+            this.dbProvider = dbProvider;
+            this.notifierProcessor = notifierProcessor;
         }
 
 
         public void Run()
         {
             logger.Info("Starting Run");
-            List<AssetModel> assets = new List<AssetModel>();
-            foreach(var assetProvider in assetProviders){
-                assets.AddRange(assetProvider.GainingAssets());
-            }
-            foreach(var assetProvider in assetProviders){
-                assets.AddRange(assetProvider.LosingAssets());
-            }
-            
-            // Pull stocks into context
-            // Pull top stocks
-            // Pull bad performing stocks
-            // Remove stocks that don’t hit requirements
-            // Pull History
-            // Remove Stocks that were too recently posted
+            runData.Assets = assetProcessors.GetAssets();
+            // Get the history of each asset
+            runData.AssetHistory = dbProvider.GetHistory(runData.Assets);
+            // Remove stocks that don’t hit requirements (percent change over a certain amount, not recently reported, etc..)
+            assetProcessors.RemoveAssetsBelowTreshold(runData.Assets,runData.AssetHistory);
             // Save new stocks to DB
-            // Post stocks to all IStockWatchOutputs[]
+            dbProvider.SaveHistory(runData.Assets);
+            // Post output to final end points
+            notifierProcessor.Notify(runData.Assets);
             logger.Info("Ending Run");
 
         }
