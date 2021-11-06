@@ -20,9 +20,10 @@ namespace StockWatch.Assets
             }
             return assets;
         }
-        public void RemoveAssetsBelowTreshold(List<AssetModel> assets, Dictionary<string, AssetHistoryModel> assetsHistory)
+        public int RemoveAssetsBelowTreshold(List<AssetModel> assets, Dictionary<string, AssetHistoryModel> assetsHistory)
         {
             int assetsLen = assets.Count();
+            int removeCount = 0;
             for (int x = assetsLen - 1; x >= 0; x -= 1)
             {
                 bool keepAsset = CheckPercentChange(assets[x]) ||
@@ -31,9 +32,11 @@ namespace StockWatch.Assets
                     CheckHistory(assets[x], assetsHistory);
                 if (!keepAsset)
                 {
+                    removeCount +=1;
                     assets.RemoveAt(x);
                 }
             }
+            return removeCount;
         }
         private bool CheckPercentChange(AssetModel asset)
         {

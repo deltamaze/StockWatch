@@ -15,11 +15,13 @@ namespace StockWatch
         private RunTimeData runData;
         private IDatabaseProvider dbProvider;
         private INotifierProcessor notifierProcessor;
+        private ISecretProcessor secretProcessor;
         public Application(ILoggingProcessor logger,
             IAssetProcessor assetProcessors,
             RunTimeData runData,
             IDatabaseProvider dbProvider,
-            INotifierProcessor notifierProcessor
+            INotifierProcessor notifierProcessor,
+            ISecretProcessor secretProcessor
         )
         {
             this.logger = logger;
@@ -27,20 +29,41 @@ namespace StockWatch
             this.runData = runData;
             this.dbProvider = dbProvider;
             this.notifierProcessor = notifierProcessor;
+            this.secretProcessor = secretProcessor;
         }
 
 
         public void Run()
         {
             logger.Info("Starting Run");
+            logger.Info("Load Secrets from json");
+            secretProcessor.LoadSecrets();
+
+            logger.Info("Get Recent Assets Activity From Web Endpoints");
             runData.Assets = assetProcessors.GetAssets();
-            // Get the history of each asset
+            if(runData.Assets.Count == 0)
+            {
+                logger.Info("No Assets pulled, ending run");
+                return;
+            }
+            logger.Info($"Assets pulled: {runData.Assets.Count}");
+
+            logger.Info("Pull History For these Assets from our Database");
             runData.AssetHistory = dbProvider.GetHistory(runData.Assets);
-            // Remove stocks that don’t hit requirements (percent change over a certain amount, not recently reported, etc..)
-            assetProcessors.RemoveAssetsBelowTreshold(runData.Assets,runData.AssetHistory);
-            // Save new stocks to DB
+            logger.Info($"Historical Records pulled:{runData.AssetHistory.Count}");
+
+            logger.Info("Clear Assets that don't meet requirements");
+            int removeCount = assetProcessors.RemoveAssetsBelowTreshold(runData.Assets,runData.AssetHistory);
+            logger.Info($"Assets Removed:{removeCount} Assets Remaining:{runData.Assets.Count}");
+            if(runData.Assets.Count == 0)
+            {
+                logger.Info("No Assets left, ending run");
+                return;
+            }
+
+            logger.Info("Save the remaining assets into the DB");
             dbProvider.SaveHistory(runData.Assets);
-            // Post output to final end points
+            logger.Info("Broadcast Alerts to Web Endpoints");
             notifierProcessor.Notify(runData.Assets);
             logger.Info("Ending Run");
 
