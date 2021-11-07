@@ -20,7 +20,24 @@ namespace StockWatch.Assets
             }
             return assets;
         }
-        public int RemoveAssetsBelowTreshold(List<AssetModel> assets, Dictionary<string, AssetHistoryModel> assetsHistory)
+        public int RemoveAssetsBelowTreshold(List<AssetModel> assets)
+        {
+            int assetsLen = assets.Count();
+            int removeCount = 0;
+            for (int x = assetsLen - 1; x >= 0; x -= 1)
+            {
+                bool keepAsset = CheckPercentChange(assets[x]) ||
+                    CheckMarketCap(assets[x]) ||
+                    CheckAvgVol(assets[x]);
+                if (!keepAsset)
+                {
+                    removeCount +=1;
+                    assets.RemoveAt(x);
+                }
+            }
+            return removeCount;
+        }
+        public int RemoveFromRecentReporting(List<AssetModel> assets, Dictionary<string, AssetHistoryModel> assetsHistory)
         {
             int assetsLen = assets.Count();
             int removeCount = 0;

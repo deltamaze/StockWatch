@@ -4,7 +4,7 @@ using StockWatch.Assets;
 
 namespace StockWatch.Data
 {
-    public class RunTimeData
+    public class RunTimeDataModel
     {
         public List<AssetModel> Assets { get; set; }
         public Dictionary<string,AssetHistoryModel> AssetHistory { get; set; }

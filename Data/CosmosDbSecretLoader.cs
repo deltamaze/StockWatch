@@ -5,8 +5,8 @@ namespace StockWatch.Data
 {
     public class CosmosDbSecretLoader : ISecretLoader
     {
-        private SecretData secrets;
-        public CosmosDbSecretLoader(SecretData secrets)
+        private SecretsDataModel secrets;
+        public CosmosDbSecretLoader(SecretsDataModel secrets)
         {
             this.secrets = secrets;
         }

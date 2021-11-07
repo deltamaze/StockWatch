@@ -2,9 +2,9 @@ namespace StockWatch.Data
 {
     public class SecretProcessor : ISecretProcessor
     {
-        private SecretData secrets;
+        private SecretsDataModel secrets;
         private ISecretLoader[] loaders;
-        public SecretProcessor(SecretData secrets, ISecretLoader[] loaders)
+        public SecretProcessor(SecretsDataModel secrets, ISecretLoader[] loaders)
         {
             this.secrets = secrets;
             this.loaders = loaders;

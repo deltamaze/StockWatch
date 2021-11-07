@@ -19,8 +19,7 @@ namespace StockWatch
             catch(Exception ex)
             {
                 Console.WriteLine("Unhandled Exception");
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.ToString());
             }
         }
     }

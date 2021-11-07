@@ -8,6 +8,8 @@ namespace StockWatch.Data
         public string PrimaryKey { get; set; }
         public string DatabaseId { get; set; }
         public string ContainerId { get; set; }
+        public string ContainerKey { get; set; }
+        public int Throughput { get; set; }
     }
 
 }

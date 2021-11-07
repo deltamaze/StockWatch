@@ -1,7 +1,7 @@
 
 namespace StockWatch.Data
 {
-    public class SecretData
+    public class SecretsDataModel
     {
         public CosmosDbConnData CosmosDbConnData { get; set; }
     }
