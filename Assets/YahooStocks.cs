@@ -55,6 +55,7 @@ namespace StockWatch.Assets
             foreach(var quote in yahooStocks.finance.result[0].quotes)
             {
                 AssetModel stock = new AssetModel();
+                stock.Id = Guid.NewGuid().ToString();
                 stock.Company = quote.longName;
                 stock.Symbol = quote.symbol;
                 stock.Url = @"https://finance.yahoo.com/quote/"+ stock.Symbol +@"/";

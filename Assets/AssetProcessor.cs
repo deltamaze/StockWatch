@@ -1,5 +1,6 @@
-using System.Linq;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StockWatch.Assets
 {
@@ -37,16 +38,15 @@ namespace StockWatch.Assets
             }
             return removeCount;
         }
-        public int RemoveFromRecentReporting(List<AssetModel> assets, Dictionary<string, AssetHistoryModel> assetsHistory)
+        public int RemoveFromRecentReporting(List<AssetModel> assets,
+            Dictionary<string, AssetHistoryModel> assetsHistory)
         {
             int assetsLen = assets.Count();
             int removeCount = 0;
             for (int x = assetsLen - 1; x >= 0; x -= 1)
             {
-                bool keepAsset = CheckPercentChange(assets[x]) ||
-                    CheckMarketCap(assets[x]) ||
-                    CheckAvgVol(assets[x]) ||
-                    CheckHistory(assets[x], assetsHistory);
+                bool keepAsset = 
+                    CheckHistory(assetsHistory[assets[x].Symbol]);
                 if (!keepAsset)
                 {
                     removeCount +=1;
@@ -82,9 +82,15 @@ namespace StockWatch.Assets
             return false;
         }
 
-        private bool CheckHistory(AssetModel asset, Dictionary<string, AssetHistoryModel> assetsHistory)
+        private bool CheckHistory(AssetHistoryModel assetsHistory)
         {
-            throw new System.Exception("Not Implemented");
+            if(DateTime.Compare(assetsHistory.LastEntry,
+                System.DateTime.Now.AddDays(-3))<0)
+            {
+                // last entry is earlier than 3 days ago, so good to re-report
+                return true;
+            }
+            return false;
         }
 
 

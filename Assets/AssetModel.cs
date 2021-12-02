@@ -4,6 +4,7 @@ namespace StockWatch.Assets
 {
     public class AssetModel
     {
+        public string Id { get; set; }
         public string Company { get; set; }
         public string Symbol { get; set; }
         public string Url { get; set; }

@@ -13,9 +13,10 @@ namespace StockWatch.Data
         public void Load()
         {
             //this file is a gitignored folder, you'll have to make your own
-            string secretFile = "cosmosConn.json";
+            string secretFile = @".\secrets\cosmosConn.json";
             if(File.Exists(secretFile)){
-                this.secrets.CosmosDbConnData = JsonSerializer.Deserialize<CosmosDbConnData>(secretFile);
+                string fileContent = File.ReadAllText(secretFile);
+                this.secrets.CosmosDbConnData = JsonSerializer.Deserialize<CosmosDbConnData>(fileContent);
             }
         }
     }

@@ -13,7 +13,7 @@ namespace StockWatch
 
                 using(var scope = container.BeginLifetimeScope()){
                     var app= scope.Resolve<IApplication>();
-                    app.Run();
+                    app.Run().Wait();
                 }
             }
             catch(Exception ex)

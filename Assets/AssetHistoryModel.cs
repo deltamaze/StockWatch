@@ -6,7 +6,7 @@ namespace StockWatch.Assets
     public class AssetHistoryModel
     {
         public DateTime LastEntry { get; set; }
-        public List<AssetModel> HistoryEntires { get; set; }
+        public List<AssetModel> HistoryEntries { get; set; }
     }
     
 }

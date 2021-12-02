@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using StockWatch.Assets;
 using StockWatch.Data;
 using StockWatch.Logging;
@@ -33,19 +34,22 @@ namespace StockWatch
         }
 
 
-        public async void Run()
+        public async Task<int> Run()
         {
 
             logger.Info("Starting Run");
             logger.Info("Load Secrets from json");
             secretProcessor.LoadSecrets();
 
+            logger.Info("Connect to Database");
+            await dbProvider.ConnectToDatabase();
+
             logger.Info("Get Recent Assets Activity From Web Endpoints");
             runData.Assets = assetProcessors.GetAssets();
             if(runData.Assets.Count == 0)
             {
                 logger.Info("No Assets pulled, ending run");
-                return;
+                return 1;
             }
             logger.Info($"Assets pulled: {runData.Assets.Count}");
 
@@ -57,11 +61,8 @@ namespace StockWatch
             if(runData.Assets.Count == 0)
             {
                 logger.Info("No Assets left, ending run");
-                return;
+                return 2;
             }
-
-            logger.Info("Establish Connection to Database");
-            await dbProvider.ConnectToDatabase();
 
             logger.Info("Pull History For these Assets from our Database");
             runData.AssetHistory = await dbProvider.GetHistory(runData.Assets);
@@ -76,7 +77,7 @@ namespace StockWatch
             if(runData.Assets.Count == 0)
             {
                 logger.Info("No Assets left, ending run");
-                return;
+                return 3;
             }
 
             logger.Info("Save the remaining assets into the DB");
@@ -85,6 +86,8 @@ namespace StockWatch
             logger.Info("Broadcast Alerts to Web Endpoints");
             notifierProcessor.Notify(runData.Assets);
             logger.Info("Ending Run");
+
+            return 4;
 
         }
     }

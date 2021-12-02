@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace StockWatch
 {
     interface IApplication
     {
-        void Run();
+        Task<int> Run();
     }
 }
