@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using StockWatch.Assets;
-using StockWatch.Logging;
+using StockWatch.Configuration;
 using StockWatch.Data;
+using StockWatch.Logging;
 
 namespace StockWatch.Notifiers
 {

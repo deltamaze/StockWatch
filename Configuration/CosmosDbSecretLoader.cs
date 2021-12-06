@@ -1,7 +1,8 @@
 using System.IO;
 using System.Text.Json;
+using StockWatch.Data;
 
-namespace StockWatch.Data
+namespace StockWatch.Configuration
 {
     public class CosmosDbSecretLoader : ISecretLoader
     {

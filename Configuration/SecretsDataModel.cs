@@ -1,5 +1,6 @@
+using StockWatch.Data;
 
-namespace StockWatch.Data
+namespace StockWatch.Configuration
 {
     public class SecretsDataModel
     {

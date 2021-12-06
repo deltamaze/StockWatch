@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StockWatch.Assets;
+using StockWatch.Configuration;
 using StockWatch.Data;
 using StockWatch.Logging;
 using StockWatch.Notifiers;

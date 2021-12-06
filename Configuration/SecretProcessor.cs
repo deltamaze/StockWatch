@@ -1,4 +1,4 @@
-namespace StockWatch.Data
+namespace StockWatch.Configuration
 {
     public class SecretProcessor : ISecretProcessor
     {
