@@ -1,5 +1,9 @@
+using System;
+using System.Text;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Net;
+using System.Net.Http;
 using StockWatch.Assets;
 using StockWatch.Configuration;
 using StockWatch.Data;
@@ -10,7 +14,8 @@ namespace StockWatch.Notifiers
     public class TwitterNotifierProvider : INotifierProvider
     {
         private SecretsDataModel secretsInfo;
-        private const string url = "https://api.twitter.com/2/tweets";
+        private const string postTweetUrl = "https://api.twitter.com/2/tweets";
+        private const string requestTokenUrl = "https://api.twitter.com/oauth/request_token";
         public TwitterNotifierProvider(SecretsDataModel secrets)
         {
             this.secretsInfo = secrets;
@@ -18,11 +23,12 @@ namespace StockWatch.Notifiers
         public void Notify(List<AssetModel> assets)
         {
             // compose message
-            string composedMessage ="";
+            string composedMessage = "";
             bool skipInitialLinebreak = true;
-            foreach(AssetModel asset in assets)
+            foreach (AssetModel asset in assets)
             {
-                if(skipInitialLinebreak){
+                if (skipInitialLinebreak)
+                {
                     skipInitialLinebreak = false;
                 }
                 else
@@ -31,23 +37,40 @@ namespace StockWatch.Notifiers
                 }
                 composedMessage +=
                 (
-                    $"Notify Stub for Asset {asset.Symbol}\n"+
+                    $"Notify Stub for Asset {asset.Symbol}\n" +
                     $"Change Percent: {asset.PercentChange} etc.."
                 );
             }
-            using (WebClient wc = new WebClient())
-            {
-                wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                string HtmlResult = wc.UploadString(url, "");
-            }
+
+
 
             // post
         }
+        public async void GetToken()
+        {
+            var httpClient = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.twitter.com/oauth2/token");
+
+            string url = "https://api.twitter.com/oauth2/token?oauth_consumer_key=" + secretsInfo.TwitterConnData.ApiKey + "&oauth_consumer_secret=" + secretsInfo.TwitterConnData.ApiSecret;
+
+            var customerInfo = Convert.ToBase64String(
+                new UTF8Encoding()
+                                .GetBytes(secretsInfo.TwitterConnData.ApiKey + ":" + secretsInfo.TwitterConnData.ApiSecret));
+
+            request.Headers.Add("Authorization", "Basic " + customerInfo);
+            request.Content = new StringContent("grant_type=client_credentials", Encoding.UTF8,
+                                                                "application/x-www-form-urlencoded");
+
+            HttpResponseMessage response = await httpClient.SendAsync(request);
+
+            string json = await response.Content.ReadAsStringAsync();
+
+            dynamic item = JsonSerializer.Deserialize<object>(json);
+        }
     }
-    
+
 }
 
-//curl -X POST https://api.twitter.com/2/tweets -H "Authorization: OAuth $OAUTH_SIGNATURE" -H "Content-type: application/json" -d '{"text": "Hello World!"}'
 
 //python example
 
