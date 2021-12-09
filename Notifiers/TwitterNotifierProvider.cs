@@ -2,12 +2,15 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Net;
+using System.IO;
 using System.Net.Http;
 using StockWatch.Assets;
 using StockWatch.Configuration;
 using StockWatch.Data;
 using StockWatch.Logging;
+using System.Web;
 
 namespace StockWatch.Notifiers
 {
@@ -16,6 +19,7 @@ namespace StockWatch.Notifiers
         private SecretsDataModel secretsInfo;
         private const string postTweetUrl = "https://api.twitter.com/2/tweets";
         private const string requestTokenUrl = "https://api.twitter.com/oauth/request_token";
+        private BearerToken token = new BearerToken();
         public TwitterNotifierProvider(SecretsDataModel secrets)
         {
             this.secretsInfo = secrets;
@@ -46,26 +50,67 @@ namespace StockWatch.Notifiers
 
             // post
         }
+        
         public async void GetToken()
         {
-            var httpClient = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.twitter.com/oauth2/token");
+            // HttpClient httpClient = new HttpClient();
+            // HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://api.twitter.com/oauth2/token");
 
-            string url = "https://api.twitter.com/oauth2/token?oauth_consumer_key=" + secretsInfo.TwitterConnData.ApiKey + "&oauth_consumer_secret=" + secretsInfo.TwitterConnData.ApiSecret;
+            // string url = "https://api.twitter.com/oauth2/token?grant_type=client_credentials";
 
-            var customerInfo = Convert.ToBase64String(
-                new UTF8Encoding()
-                                .GetBytes(secretsInfo.TwitterConnData.ApiKey + ":" + secretsInfo.TwitterConnData.ApiSecret));
+            // string customerInfo = Convert.ToBase64String(
+            //     new UTF8Encoding()
+            //     .GetBytes(secretsInfo.TwitterConnData.ApiKey + ":" + secretsInfo.TwitterConnData.ApiSecret)
+            //     );
 
-            request.Headers.Add("Authorization", "Basic " + customerInfo);
-            request.Content = new StringContent("grant_type=client_credentials", Encoding.UTF8,
-                                                                "application/x-www-form-urlencoded");
+            // request.Headers.Add("Authorization", "Basic " + customerInfo);
+            // request.Content = new StringContent("grant_type=client_credentials", Encoding.UTF8,
+            //                                                     "application/x-www-form-urlencoded");
 
-            HttpResponseMessage response = await httpClient.SendAsync(request);
+            // HttpResponseMessage response = await httpClient.SendAsync(request);
 
-            string json = await response.Content.ReadAsStringAsync();
+            // string json = await response.Content.ReadAsStringAsync();
 
-            dynamic item = JsonSerializer.Deserialize<object>(json);
+            // dynamic item = JsonSerializer.Deserialize<object>(json);
+
+
+
+            //https://dev.twitter.com/oauth/application-only
+            //Step 1
+            string strBearerRequest = HttpUtility.UrlEncode(this.secretsInfo.TwitterConnData.ApiKey) + ":" + HttpUtility.UrlEncode(this.secretsInfo.TwitterConnData.ApiSecret);
+            //http://stackoverflow.com/a/11743162
+            strBearerRequest = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(strBearerRequest));
+
+            //Step 2
+            WebRequest request = WebRequest.Create("https://api.twitter.com/oauth2/token");
+            request.Headers.Add("Authorization", "Basic " + strBearerRequest);
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
+
+            string strRequestContent = "grant_type=client_credentials";
+            byte[] bytearrayRequestContent = System.Text.Encoding.UTF8.GetBytes(strRequestContent);
+            Stream requestStream = request.GetRequestStream();
+            requestStream.Write(bytearrayRequestContent, 0, bytearrayRequestContent.Length);
+            requestStream.Close();
+
+            string responseJson = string.Empty;
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                Stream responseStream = response.GetResponseStream();
+                responseJson = new StreamReader(responseStream).ReadToEnd();
+            }
+
+
+            token = JsonSerializer.Deserialize<BearerToken>(responseJson);
+
+            
+        }
+        private class BearerToken
+        {
+            [JsonPropertyName("access_token")]
+            public string AccessToken { get; set; }
         }
     }
 
