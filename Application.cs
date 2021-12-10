@@ -38,6 +38,7 @@ namespace StockWatch
         public async Task<int> Run()
         {
 
+            
             logger.Info("Starting Run");
             logger.Info("Load Secrets from json");
             secretProcessor.LoadSecrets();
@@ -64,6 +65,9 @@ namespace StockWatch
                 logger.Info("No Assets left, ending run");
                 return 2;
             }
+
+            //TEST
+            notifierProcessor.Notify(runData.Assets);
 
             logger.Info("Pull History For these Assets from our Database");
             runData.AssetHistory = await dbProvider.GetHistory(runData.Assets);

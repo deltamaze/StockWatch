@@ -1,16 +1,12 @@
-using System;
-using System.Text;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Net;
-using System.IO;
-using System.Net.Http;
+using System.Web;
+
 using StockWatch.Assets;
 using StockWatch.Configuration;
-using StockWatch.Data;
-using StockWatch.Logging;
-using System.Web;
 
 namespace StockWatch.Notifiers
 {
@@ -19,13 +15,15 @@ namespace StockWatch.Notifiers
         private SecretsDataModel secretsInfo;
         private const string postTweetUrl = "https://api.twitter.com/2/tweets";
         private const string requestTokenUrl = "https://api.twitter.com/oauth/request_token";
-        private BearerToken token = new BearerToken();
+        private AccessToken token = new AccessToken();
         public TwitterNotifierProvider(SecretsDataModel secrets)
         {
             this.secretsInfo = secrets;
         }
         public void Notify(List<AssetModel> assets)
         {
+            // set twitter access token
+            GetToken();
             // compose message
             string composedMessage = "";
             bool skipInitialLinebreak = true;
@@ -46,42 +44,22 @@ namespace StockWatch.Notifiers
                 );
             }
 
-
-
             // post
         }
         
-        public async void GetToken()
+        public void GetToken()
         {
-            // HttpClient httpClient = new HttpClient();
-            // HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://api.twitter.com/oauth2/token");
-
-            // string url = "https://api.twitter.com/oauth2/token?grant_type=client_credentials";
-
-            // string customerInfo = Convert.ToBase64String(
-            //     new UTF8Encoding()
-            //     .GetBytes(secretsInfo.TwitterConnData.ApiKey + ":" + secretsInfo.TwitterConnData.ApiSecret)
-            //     );
-
-            // request.Headers.Add("Authorization", "Basic " + customerInfo);
-            // request.Content = new StringContent("grant_type=client_credentials", Encoding.UTF8,
-            //                                                     "application/x-www-form-urlencoded");
-
-            // HttpResponseMessage response = await httpClient.SendAsync(request);
-
-            // string json = await response.Content.ReadAsStringAsync();
-
-            // dynamic item = JsonSerializer.Deserialize<object>(json);
-
-
 
             //https://dev.twitter.com/oauth/application-only
-            //Step 1
-            string strBearerRequest = HttpUtility.UrlEncode(this.secretsInfo.TwitterConnData.ApiKey) + ":" + HttpUtility.UrlEncode(this.secretsInfo.TwitterConnData.ApiSecret);
-            //http://stackoverflow.com/a/11743162
-            strBearerRequest = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(strBearerRequest));
+            string strBearerRequest = HttpUtility.UrlEncode(
+                this.secretsInfo.TwitterConnData.ApiKey)
+                + ":" + HttpUtility.UrlEncode(this.secretsInfo.TwitterConnData.ApiSecret
+            );
+            
+            strBearerRequest = System.Convert.ToBase64String(
+                System.Text.Encoding.UTF8.GetBytes(strBearerRequest)
+            );
 
-            //Step 2
             WebRequest request = WebRequest.Create("https://api.twitter.com/oauth2/token");
             request.Headers.Add("Authorization", "Basic " + strBearerRequest);
             request.Method = "POST";
@@ -102,15 +80,13 @@ namespace StockWatch.Notifiers
                 responseJson = new StreamReader(responseStream).ReadToEnd();
             }
 
+            token = JsonSerializer.Deserialize<AccessToken>(responseJson);
 
-            token = JsonSerializer.Deserialize<BearerToken>(responseJson);
-
-            
         }
-        private class BearerToken
+        private class AccessToken
         {
             [JsonPropertyName("access_token")]
-            public string AccessToken { get; set; }
+            public string Value { get; set; }
         }
     }
 
