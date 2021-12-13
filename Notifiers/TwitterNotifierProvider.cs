@@ -14,7 +14,7 @@ namespace StockWatch.Notifiers
     {
         private SecretsDataModel secretsInfo;
         private const string postTweetUrl = "https://api.twitter.com/2/tweets";
-        private const string requestTokenUrl = "https://api.twitter.com/oauth/request_token";
+        private const string requestTokenUrl = "https://api.twitter.com/oauth2/token";
         private AccessToken token = new AccessToken();
         public TwitterNotifierProvider(SecretsDataModel secrets)
         {
@@ -47,7 +47,24 @@ namespace StockWatch.Notifiers
             // post
         }
         
-        public void GetToken()
+        private void PostStatus(string msg)
+        {
+            string strBearerRequest = HttpUtility.UrlEncode(
+                this.token.Value
+            );
+            
+            strBearerRequest = System.Convert.ToBase64String(
+                System.Text.Encoding.UTF8.GetBytes(strBearerRequest)
+            );
+            
+            WebRequest request = WebRequest.Create(postTweetUrl);
+            request.Headers.Add("Authorization", "Bearer " + strBearerRequest);
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            //curl -X POST "https://api.twitter.com/2/tweets" -H "Authorization: OAuth $OAUTH_SIGNATURE" -H "Content-type: application/json" -d '{"text":"test","quote_tweet_id":""}'
+        }
+        
+        private void GetToken()
         {
 
             //https://dev.twitter.com/oauth/application-only
@@ -60,7 +77,7 @@ namespace StockWatch.Notifiers
                 System.Text.Encoding.UTF8.GetBytes(strBearerRequest)
             );
 
-            WebRequest request = WebRequest.Create("https://api.twitter.com/oauth2/token");
+            WebRequest request = WebRequest.Create(requestTokenUrl);
             request.Headers.Add("Authorization", "Basic " + strBearerRequest);
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
@@ -82,6 +99,31 @@ namespace StockWatch.Notifiers
 
             token = JsonSerializer.Deserialize<AccessToken>(responseJson);
 
+        }
+        private HttpWebResponse PostRequest(string url, string AuthValue, string ContentType, string strRequestContent)
+        {
+            string strBearerRequest = HttpUtility.UrlEncode(
+                this.secretsInfo.TwitterConnData.ApiKey)
+                + ":" + HttpUtility.UrlEncode(this.secretsInfo.TwitterConnData.ApiSecret
+            );
+            
+            strBearerRequest = System.Convert.ToBase64String(
+                System.Text.Encoding.UTF8.GetBytes(strBearerRequest)
+            );
+
+            WebRequest request = WebRequest.Create(requestTokenUrl);
+            request.Headers.Add("Authorization", "Basic " + strBearerRequest);
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
+
+            byte[] bytearrayRequestContent = System.Text.Encoding.UTF8.GetBytes(strRequestContent);
+            Stream requestStream = request.GetRequestStream();
+            requestStream.Write(bytearrayRequestContent, 0, bytearrayRequestContent.Length);
+            requestStream.Close();
+
+            string responseJson = string.Empty;
+
+            return (HttpWebResponse)request.GetResponse();
         }
         private class AccessToken
         {
